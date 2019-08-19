@@ -9,21 +9,37 @@ import javax.swing.Timer;
 
 public class Game extends JPanel implements ActionListener, KeyListener {
 	Timer time;
-	GameObject jumper;
+	Jumper jumper;
+	ObjectRunner or;
+	final static boolean ACTIVE_STATE = true;
+	boolean currentState = true;
 	Game() {
 		time = new Timer(1000/60,this);
-		jumper = new GameObject(0,HEIGHT-100,100,100);
+		jumper = new Jumper(40,HEIGHT+40,40,40);
+		or = new ObjectRunner(jumper);
 	}
-	void draw(Graphics g) {
-		g.fillRect(jumper.x, jumper.y, jumper.width,jumper.height);
+	void drawGame(Graphics g) {
+		or.draw(g);
+		or.manageBlocks();
+		or.collide();
 	}
 	void update() {
-		
+		or.update();
+	}
+	@Override
+	public void paintComponent(Graphics g){
+		drawGame(g);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("does this work");
+		repaint();
+		if(currentState == ACTIVE_STATE){
+            update();
+		}else {
+			
+		}
+		
 	}
 	void start() {
 		time.start();
@@ -36,7 +52,9 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			jumper.gravity *= -1;
+		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {

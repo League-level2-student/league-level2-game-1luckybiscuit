@@ -1,6 +1,7 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 public class GravityGuy {
@@ -22,6 +23,7 @@ public class GravityGuy {
 		window.setVisible(true);
 		window.setDefaultCloseOperation(window.EXIT_ON_CLOSE);
 		window.setSize(new Dimension(WIDTH,HEIGHT));
+		//JOptionPane.showMessageDialog(null, "Put instructions here");
 		game.start();
 	}
 }

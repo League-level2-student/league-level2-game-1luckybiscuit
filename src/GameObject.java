@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class GameObject {
@@ -6,12 +7,16 @@ public class GameObject {
 	int width;
 	int height;
 	boolean active;
+	Rectangle colBox;
 	GameObject(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		active = true;
-		Rectangle object = new Rectangle(x,y,width,height);
+		colBox = new Rectangle(x,y,width,height);
+	}
+	void update() {
+		colBox.setBounds(x,y,width,height);
 	}
 }
