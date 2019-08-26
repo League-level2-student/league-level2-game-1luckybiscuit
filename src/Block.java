@@ -14,9 +14,11 @@ public class Block extends GameObject{
 	}
 	void update() {
 		x-=5;
+		setBounds();
+		checkBounds();
 	}
 	void checkBounds() {
-		if(x < 0) {
+		if(x < -40) {
 			active = false;
 		}
 	}

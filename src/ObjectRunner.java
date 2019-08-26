@@ -16,7 +16,7 @@ public class ObjectRunner {
 	void manageBlocks() {
 		if(System.currentTimeMillis() - timer >= interval) {
 			addTopBlock(new Block(GravityGuy.WIDTH, 100, 40, 40));
-			addBotmBlock(new Block(GravityGuy.WIDTH, 600, 40, 40));
+			addBotmBlock(new Block(GravityGuy.WIDTH, 400, 40, 40));
 			timer = System.currentTimeMillis();
 		}
 	}
@@ -43,13 +43,17 @@ public class ObjectRunner {
 		
 	}
 	void update() {
-		jump.update();
 		for(int i = 0;i < topBlockList.size();i++) {
 			topBlockList.get(i).update();
 		}
 		for(int i = 0;i < botmBlockList.size();i++) {
 			botmBlockList.get(i).update();
 		}
+		jump.colBox.y += jump.speed;
+		collide();
+		jump.update();
+		manageBlocks();
+		purgeObjects();
 	}
 	void addTopBlock(Block b) {
 		topBlockList.add(b);
@@ -60,12 +64,24 @@ public class ObjectRunner {
 	void collide() {
 		for(Block i: topBlockList) {
 			if(jump.colBox.intersects(i.colBox)) {
-				System.out.println("collision");
+				if(jump.colBox.getMinY() < i.colBox.getMaxY()) {
+					System.out.println("topCollision");
+					jump.gravity = 0;
+				}
+				if(jump.colBox.getMaxX() < i.colBox.getMinX()) {
+					System.out.println("horizontalCollision");
+				}
 			}
 		}
 		for(Block i: botmBlockList) {
 			if(jump.colBox.intersects(i.colBox)) {
-				System.out.println("collision");
+				if(jump.colBox.getMaxY() > i.colBox.getMinY()) {
+					System.out.println("botCollision");
+					jump.gravity = 0;
+				}
+				if(jump.colBox.getMaxX() < i.colBox.getMinX()) {
+					System.out.println("horizontalCollision");
+				}
 			}
 		}
 	}

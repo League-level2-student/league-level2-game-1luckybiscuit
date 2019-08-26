@@ -20,8 +20,6 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	}
 	void drawGame(Graphics g) {
 		or.draw(g);
-		or.manageBlocks();
-		or.collide();
 	}
 	void update() {
 		or.update();
@@ -53,7 +51,8 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			jumper.gravity *= -1;
+			jumper.gravity = 1;
+			jumper.velocity *= -1;
 		}
 	}
 	@Override

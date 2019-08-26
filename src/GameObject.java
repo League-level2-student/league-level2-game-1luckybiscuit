@@ -16,7 +16,7 @@ public class GameObject {
 		active = true;
 		colBox = new Rectangle(x,y,width,height);
 	}
-	void update() {
-		colBox.setBounds(x,y,width,height);
+	void setBounds() {
+		colBox = new Rectangle(x,y,width,height);
 	}
 }
