@@ -8,7 +8,7 @@ public class GravityGuy {
 	JFrame window;
 	Game game;
 	final static int WIDTH = 800;
-	final static int HEIGHT = 500;
+	final static int HEIGHT = 800;
 	GravityGuy() {
 		game = new Game();
 		window = new JFrame();
@@ -22,7 +22,9 @@ public class GravityGuy {
 		window.addKeyListener(game);
 		window.setVisible(true);
 		window.setDefaultCloseOperation(window.EXIT_ON_CLOSE);
-		window.setSize(new Dimension(WIDTH,HEIGHT));
+		window.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		window.pack();
+		window.setResizable(false);
 		//JOptionPane.showMessageDialog(null, "Put instructions here");
 		game.start();
 	}

@@ -10,7 +10,7 @@ public class Block extends GameObject{
 
 	void draw(Graphics g) {
 		g.setColor(Color.BLUE);
-		g.fillRect(x, y, width, height);
+		g.fillRect((int) x, (int)y, width, height);
 	}
 	void update() {
 		x-=5;
@@ -18,7 +18,7 @@ public class Block extends GameObject{
 		checkBounds();
 	}
 	void checkBounds() {
-		if(x < -40) {
+		if(x + width < 0) {
 			active = false;
 		}
 	}

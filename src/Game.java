@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,11 +12,13 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	Timer time;
 	Jumper jumper;
 	ObjectRunner or;
-	final static boolean ACTIVE_STATE = true;
-	boolean currentState = true;
+	final static int MENU_STATE = 0;
+	final static int ACTIVE_STATE = 1;
+	final static int END_STATE = 2;
+	int currentState = 1;
 	Game() {
 		time = new Timer(1000/60,this);
-		jumper = new Jumper(40,HEIGHT+40,40,40);
+		jumper = new Jumper(50,GravityGuy.HEIGHT/2 - 50,50,50);
 		or = new ObjectRunner(jumper);
 	}
 	void drawGame(Graphics g) {
@@ -23,6 +26,10 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	}
 	void update() {
 		or.update();
+		if(jumper.active == false) {
+			//System.out.println("ded");
+			//currentState = 2;
+		}
 	}
 	@Override
 	public void paintComponent(Graphics g){
@@ -51,8 +58,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			jumper.gravity = 1;
-			jumper.velocity *= -1;
+			jumper.gravity *= -1;
 		}
 	}
 	@Override
