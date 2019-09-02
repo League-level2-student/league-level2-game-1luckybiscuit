@@ -5,6 +5,7 @@ public class Jumper extends GameObject {
 	int gravity = 1;
 	int velocity = 1;
 	boolean gravityChanged = false;
+	boolean stopped = false;
 	Jumper(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		// TODO Auto-generated constructor stub
@@ -15,6 +16,7 @@ public class Jumper extends GameObject {
 		g.fillRect((int)x, (int)y, width, height);
 	}
 	void update() {
+		checkSpeed();
 		velocity += gravity;
 		//System.out.println(velocity);
 		y += velocity;
@@ -25,6 +27,11 @@ public class Jumper extends GameObject {
 	void checkBounds() {
 		if(x < -50 || y > GravityGuy.HEIGHT || y < 0) {
 			active = false;
+		}
+	}
+	void checkSpeed() {
+		if(stopped == false && x < 200) {
+			x++;
 		}
 	}
 }

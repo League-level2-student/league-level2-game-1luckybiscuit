@@ -9,10 +9,12 @@ public class ObjectRunner {
 	long randTimer;
 	Random generator = new Random();
 	int formPicker = generator.nextInt(5);
-	int randInterval = generator.nextInt((5) + 1)*1000;
+	int randInterval = (generator.nextInt(3) + 1)*1000;
+	int randHeight = (generator.nextInt(4) + 1)*100;
 	int coinFlip = generator.nextInt(2);
 	int interval = 150;
 	int intervalCount = 0;
+	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
 		addBlock(new Block(0, 50, GravityGuy.WIDTH + 50, 50));
@@ -20,24 +22,26 @@ public class ObjectRunner {
 	}
 	void manageBlocks() {
 		if(System.currentTimeMillis() - timer >= interval) {
-			if(intervalCount <= 100) {
+			if(intervalCount <= 10) {
 				addBlock(new Block(GravityGuy.WIDTH, 50, 50, 50));
 				addBlock(new Block(GravityGuy.WIDTH, 650, 50, 50));
 			}
 			timer = System.currentTimeMillis();
-			intervalCount++;
 			//System.out.println(intervalCount);
 		}
 		if(System.currentTimeMillis() - randTimer >= randInterval) {
-			System.out.println(coinFlip);
+			//System.out.println(coinFlip);
 			if(coinFlip == 0) {
-				addBlock(new Block(GravityGuy.WIDTH, 100, 50, 200));
+				addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
 			}else if(coinFlip == 1) {
-				addBlock(new Block(GravityGuy.WIDTH, 450, 50, 200));
+				addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
 			}
 			coinFlip = generator.nextInt(2);
-			randInterval = generator.nextInt((5) + 1)*1000;
+			randHeight = (generator.nextInt(4) + 1)*100;
+			randInterval = (generator.nextInt(5) + 1)*1000;
 			randTimer = System.currentTimeMillis();
+			intervalCount++; 
+			System.out.println(intervalCount);
 		}
 	}
 	void purgeObjects() {
@@ -55,9 +59,11 @@ public class ObjectRunner {
 	}
 	void update() {
 		for(int i = 0;i < BlockList.size();i++) {
+			BlockList.get(i).x -= 5;
 			BlockList.get(i).update();
 		}
-		jump.colBox.y += jump.velocity;
+		jump.vertBox.y += jump.velocity;
+		jump.horiBox.x++;
 		collide();
 		jump.update();
 		manageBlocks();
@@ -68,17 +74,23 @@ public class ObjectRunner {
 	}
 	void collide() {
 		for(Block i: BlockList) {
-			if(jump.colBox.intersects(i.colBox)) {
-				if(i.colBox.getMaxY() > jump.colBox.getMinY() && jump.colBox.getMinY() > i.colBox.getMinY()) {
-					jump.y = (int) (i.colBox.getMaxY());
-					jump.velocity = 0;
+			if(jump.horiBox.intersects(i.horiBox)) {
+				if(jump.horiBox.getMaxX() > i.vertBox.getMinX()) {
+					jump.stopped = true;
+					jump.x = (int) (i.vertBox.getMinX()-jump.width);
 				}
-				if(jump.colBox.getMaxX() < i.colBox.getMinX()) {
-					System.out.println("horizontalCollision");
-				}
-				if(i.colBox.getMaxY() > jump.colBox.getMaxY() && jump.colBox.getMaxY() > i.colBox.getMinY()) {
-					jump.y = (int) (i.colBox.getMinY() - jump.height);
-					jump.velocity = 0;
+			}else{
+				jump.stopped = false;
+				if(jump.vertBox.intersects(i.vertBox)) {
+					if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
+						jump.y = (int) (i.vertBox.getMaxY());
+						jump.velocity = 0;
+					}
+					if(i.vertBox.getMaxY() > jump.vertBox.getMaxY() && jump.vertBox.getMaxY() > i.vertBox.getMinY()) {
+						jump.y = (int) (i.vertBox.getMinY() - jump.height);
+						jump.velocity = 0;
+					}
+					
 				}
 			}
 		}

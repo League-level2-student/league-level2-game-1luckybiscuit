@@ -18,7 +18,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	int currentState = 1;
 	Game() {
 		time = new Timer(1000/60,this);
-		jumper = new Jumper(50,GravityGuy.HEIGHT/2 - 50,50,50);
+		jumper = new Jumper(200,GravityGuy.HEIGHT/2 - 50,50,50);
 		or = new ObjectRunner(jumper);
 	}
 	void drawGame(Graphics g) {

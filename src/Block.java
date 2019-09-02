@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Block extends GameObject{
-
 	Block(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		// TODO Auto-generated constructor stub
@@ -13,7 +12,6 @@ public class Block extends GameObject{
 		g.fillRect((int) x, (int)y, width, height);
 	}
 	void update() {
-		x-=5;
 		setBounds();
 		checkBounds();
 	}

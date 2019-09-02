@@ -7,16 +7,19 @@ public class GameObject {
 	int width;
 	int height;
 	boolean active;
-	Rectangle colBox;
+	Rectangle vertBox;
+	Rectangle horiBox;
 	GameObject(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		active = true;
-		colBox = new Rectangle(x,y,width,height);
+		vertBox = new Rectangle(x,y,width,height);
+		horiBox = new Rectangle(x,y,width,height);
 	}
 	void setBounds() {
-		colBox = new Rectangle((int) x,(int) y,width,height);
+		vertBox = new Rectangle((int) x,(int) y,width,height);
+		horiBox = new Rectangle((int) x,(int) y + 1,width,height - 2);
 	}
 }
