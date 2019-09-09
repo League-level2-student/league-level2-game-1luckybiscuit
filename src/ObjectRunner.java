@@ -8,40 +8,61 @@ public class ObjectRunner {
 	long timer;
 	long randTimer;
 	Random generator = new Random();
-	int formPicker = generator.nextInt(5);
+	int formation = 0;
 	int randInterval = (generator.nextInt(3) + 1)*1000;
 	int randHeight = (generator.nextInt(4) + 1)*100;
+	int randSpace = generator.nextInt(4)*50;
 	int coinFlip = generator.nextInt(2);
-	int interval = 150;
+	int interval = 155;
+	int oppositeInt = 160 - interval;
 	int intervalCount = 0;
 	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
-		addBlock(new Block(0, 50, GravityGuy.WIDTH + 50, 50));
-		addBlock(new Block(0, 650, GravityGuy.WIDTH + 50, 50));
+		addBlock(new Block(0, 50, GravityGuy.WIDTH + 100, 50));
+		addBlock(new Block(0, 650, GravityGuy.WIDTH + 100, 50));
 	}
 	void manageBlocks() {
-		if(System.currentTimeMillis() - timer >= interval) {
-			if(intervalCount <= 10) {
-				addBlock(new Block(GravityGuy.WIDTH, 50, 50, 50));
-				addBlock(new Block(GravityGuy.WIDTH, 650, 50, 50));
+		if(formation == 0) {
+			if(System.currentTimeMillis() - timer >= interval) {
+				addBlock(new Block(GravityGuy.WIDTH, 50, oppositeInt*10, 50));
+				addBlock(new Block(GravityGuy.WIDTH, 650, oppositeInt*10, 50));
+				timer = System.currentTimeMillis();
 			}
-			timer = System.currentTimeMillis();
-			//System.out.println(intervalCount);
+			if(System.currentTimeMillis() - randTimer >= randInterval) {
+				if(coinFlip == 0) {
+					addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
+				}else if(coinFlip == 1) {
+					addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
+				}else if(coinFlip == 2) {
+					addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
+					addBlock(new Block(GravityGuy.WIDTH, 200+randSpace+randHeight, 50, 450-randHeight-randSpace));
+				}
+				coinFlip = generator.nextInt(3);
+				randHeight = (generator.nextInt(4) + 1)*100; 
+				randInterval = (generator.nextInt(3) + 1)*(1000 - intervalCount*10);
+				randTimer = System.currentTimeMillis();
+				oppositeInt = 157 - interval;
+				intervalCount++; 
+				System.out.println(intervalCount);
+			}
 		}
-		if(System.currentTimeMillis() - randTimer >= randInterval) {
-			//System.out.println(coinFlip);
-			if(coinFlip == 0) {
-				addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-			}else if(coinFlip == 1) {
-				addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
+		if(formation == 1) { 
+			if(System.currentTimeMillis() - timer >= interval) {
+				addBlock(new Block(GravityGuy.WIDTH, 50 + randHeight, oppositeInt*10, 50));
+				addBlock(new Block(GravityGuy.WIDTH, 550+ randHeight, oppositeInt*10, 50));
+				timer = System.currentTimeMillis();
 			}
-			coinFlip = generator.nextInt(2);
-			randHeight = (generator.nextInt(4) + 1)*100;
-			randInterval = (generator.nextInt(5) + 1)*1000;
-			randTimer = System.currentTimeMillis();
-			intervalCount++; 
-			System.out.println(intervalCount);
+		}
+		if(intervalCount <= 5) {
+			formation = 0;
+		}else if(intervalCount > 5 && intervalCount <= 10) {
+			formation = 0;
+			interval=152;
+		}else if(intervalCount > 10 && intervalCount <= 30) {
+			interval=150;
+		}else if(intervalCount > 30 && intervalCount <= 55) {
+			interval=148;
 		}
 	}
 	void purgeObjects() {
@@ -59,7 +80,7 @@ public class ObjectRunner {
 	}
 	void update() {
 		for(int i = 0;i < BlockList.size();i++) {
-			BlockList.get(i).x -= 5;
+			BlockList.get(i).x -= oppositeInt;
 			BlockList.get(i).update();
 		}
 		jump.vertBox.y += jump.velocity;
