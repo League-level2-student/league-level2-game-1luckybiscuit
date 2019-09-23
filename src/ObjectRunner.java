@@ -13,9 +13,12 @@ public class ObjectRunner {
 	int randHeight = (generator.nextInt(4) + 1)*100;
 	int randSpace = generator.nextInt(4)*50;
 	int coinFlip = generator.nextInt(2);
-	int interval = 155;
+	int interval = 150;
 	int oppositeInt = 160 - interval;
 	int intervalCount = 0;
+	int counter = 0;
+	int counterCounter = 0;
+	int oof = 1;
 	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
@@ -23,46 +26,67 @@ public class ObjectRunner {
 		addBlock(new Block(0, 650, GravityGuy.WIDTH + 100, 50));
 	}
 	void manageBlocks() {
-		if(formation == 0) {
-			if(System.currentTimeMillis() - timer >= interval) {
-				addBlock(new Block(GravityGuy.WIDTH, 50, oppositeInt*10, 50));
-				addBlock(new Block(GravityGuy.WIDTH, 650, oppositeInt*10, 50));
-				timer = System.currentTimeMillis();
-			}
-			if(System.currentTimeMillis() - randTimer >= randInterval) {
-				if(coinFlip == 0) {
-					addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-				}else if(coinFlip == 1) {
-					addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
-				}else if(coinFlip == 2) {
-					addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-					addBlock(new Block(GravityGuy.WIDTH, 200+randSpace+randHeight, 50, 450-randHeight-randSpace));
-				}
-				coinFlip = generator.nextInt(3);
-				randHeight = (generator.nextInt(4) + 1)*100; 
-				randInterval = (generator.nextInt(3) + 1)*(1000 - intervalCount*10);
-				randTimer = System.currentTimeMillis();
-				oppositeInt = 157 - interval;
-				intervalCount++; 
-				System.out.println(intervalCount);
-			}
-		}
-		if(formation == 1) { 
-			if(System.currentTimeMillis() - timer >= interval) {
-				addBlock(new Block(GravityGuy.WIDTH, 50 + randHeight, oppositeInt*10, 50));
-				addBlock(new Block(GravityGuy.WIDTH, 550+ randHeight, oppositeInt*10, 50));
-				timer = System.currentTimeMillis();
-			}
-		}
+		prepFormation(formation);
 		if(intervalCount <= 5) {
 			formation = 0;
 		}else if(intervalCount > 5 && intervalCount <= 10) {
 			formation = 0;
-			interval=152;
+			interval = 149;
 		}else if(intervalCount > 10 && intervalCount <= 30) {
-			interval=150;
+			formation = 0;
+			interval = 148;
 		}else if(intervalCount > 30 && intervalCount <= 55) {
-			interval=148;
+			interval = 147;
+		}
+	}
+	void prepFormation(int formation) {
+		if(System.currentTimeMillis() - timer >= interval) {
+			if(formation == 0) {
+				//walls
+				addBlock(new Block(GravityGuy.WIDTH, 50, oppositeInt*10, 50));
+				addBlock(new Block(GravityGuy.WIDTH, 650, oppositeInt*10, 50));
+					//randomize blocks
+				if(System.currentTimeMillis() - randTimer >= randInterval) {
+					if(coinFlip == 0) {
+						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
+					}else if(coinFlip == 1) {
+						addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
+					}else if(coinFlip == 2) {
+						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
+						addBlock(new Block(GravityGuy.WIDTH, 150+randSpace+randHeight, 50, 450-randHeight-randSpace));
+					}else if(coinFlip == 3) {
+						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
+						addBlock(new Block(GravityGuy.WIDTH, 200+randHeight, 50, 450-randHeight));
+					}
+					//coinFlip = generator.nextInt(3);
+					coinFlip = 3;
+					randHeight = (generator.nextInt(4) + 1)*100; 
+					randInterval = (generator.nextInt(3) + 1)*(700 - intervalCount*10);
+					randTimer = System.currentTimeMillis();
+					oppositeInt = 157 - interval;
+					intervalCount++; 
+					System.out.println(intervalCount);
+					}
+			}
+			
+			if(formation == 1) { 
+				if(counterCounter == 0) {
+					oof = 1;
+				}else if(counterCounter == 15) {
+					oof = -1;
+				}
+				else if(counterCounter < 5) {
+					counter = 1;
+				}else if(counterCounter >= 5 && counterCounter < 10) {
+					counter = 2;
+				}else if(counterCounter >= 10 && counterCounter < 15) {
+					counter = 3;
+				}
+				addBlock(new Block(GravityGuy.WIDTH, 50+counter*50, oppositeInt*10, 50));
+				addBlock(new Block(GravityGuy.WIDTH, 650-(counter*50), oppositeInt*10, 50));
+				counterCounter+=oof;
+			}
+			timer = System.currentTimeMillis();
 		}
 	}
 	void purgeObjects() {
