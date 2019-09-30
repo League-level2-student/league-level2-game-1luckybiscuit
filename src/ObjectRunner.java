@@ -5,20 +5,22 @@ import java.util.Random;
 public class ObjectRunner {
 	Jumper jump;
 	ArrayList<Block> BlockList = new ArrayList();
+	long initialTimer = 1000;
 	long timer;
 	long randTimer;
 	Random generator = new Random();
 	int formation = 0;
-	int randInterval = (generator.nextInt(3) + 1)*1000;
-	int randHeight = (generator.nextInt(4) + 1)*100;
-	int randSpace = generator.nextInt(4)*50;
-	int coinFlip = generator.nextInt(2);
+	int randInterval;
+	int randHeight;
+	int randSpace;
+	int coinFlip;
 	int interval = 150;
-	int oppositeInt = 160 - interval;
+	int oppositeInt;
 	int intervalCount = 0;
 	int counter = 0;
 	int counterCounter = 0;
 	int oof = 1;
+	int score = 0;
 	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
@@ -27,8 +29,25 @@ public class ObjectRunner {
 	}
 	void manageBlocks() {
 		prepFormation(formation);
-		if(intervalCount <= 5) {
+		if(intervalCount < 5) {
 			formation = 0;
+			if(System.currentTimeMillis() - initialTimer > 0) {
+				if(intervalCount == 0) {
+					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 400));
+				}else if(intervalCount == 1) {
+					addBlock(new Block(GravityGuy.WIDTH, 250, 50, 400));
+				}else if(intervalCount == 2) {
+					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 300));
+					//System.out.println(randHeight + " " + randSpace);
+					addBlock(new Block(GravityGuy.WIDTH, 550, 50, 100));
+				}else if(intervalCount == 3) {
+					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 200));
+					addBlock(new Block(GravityGuy.WIDTH, 350, 50, 300));
+				}
+				initialTimer = System.currentTimeMillis()+1000;
+				intervalCount++; 
+				System.out.println(intervalCount);
+			}
 		}else if(intervalCount > 5 && intervalCount <= 10) {
 			formation = 0;
 			interval = 149;
@@ -41,34 +60,34 @@ public class ObjectRunner {
 	}
 	void prepFormation(int formation) {
 		if(System.currentTimeMillis() - timer >= interval) {
+			//gravity guy formation
 			if(formation == 0) {
-				//walls
+				//floor and ceiling
 				addBlock(new Block(GravityGuy.WIDTH, 50, oppositeInt*10, 50));
 				addBlock(new Block(GravityGuy.WIDTH, 650, oppositeInt*10, 50));
-					//randomize blocks
-				if(System.currentTimeMillis() - randTimer >= randInterval) {
-					if(coinFlip == 0) {
-						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-					}else if(coinFlip == 1) {
-						addBlock(new Block(GravityGuy.WIDTH, 650-randHeight, 50, randHeight));
-					}else if(coinFlip == 2) {
-						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-						addBlock(new Block(GravityGuy.WIDTH, 150+randSpace+randHeight, 50, 450-randHeight-randSpace));
-					}else if(coinFlip == 3) {
-						addBlock(new Block(GravityGuy.WIDTH, 100, 50, randHeight));
-						addBlock(new Block(GravityGuy.WIDTH, 200+randHeight, 50, 450-randHeight));
-					}
-					//coinFlip = generator.nextInt(3);
-					coinFlip = 3;
-					randHeight = (generator.nextInt(4) + 1)*100; 
-					randInterval = (generator.nextInt(3) + 1)*(700 - intervalCount*10);
-					randTimer = System.currentTimeMillis();
-					oppositeInt = 157 - interval;
-					intervalCount++; 
-					System.out.println(intervalCount);
-					}
+				if(intervalCount >= 5) {
+					randomWalls(100,650);
+				}
 			}
-			
+			//twin wave formation
+			if(formation == 1) { 
+				if(counterCounter == 0) {
+					oof = 1;
+				}else if(counterCounter == 15) {
+					oof = -1;
+				}
+				else if(counterCounter < 5) {
+					counter = 1;
+				}else if(counterCounter >= 5 && counterCounter < 10) {
+					counter = 2;
+				}else if(counterCounter >= 10 && counterCounter < 15) {
+					counter = 3;
+				}
+				addBlock(new Block(GravityGuy.WIDTH, 50+counter*50, oppositeInt*10, 50));
+				addBlock(new Block(GravityGuy.WIDTH, 650-(counter*50), oppositeInt*10, 50));
+				counterCounter+=oof;
+			}
+			//single wave formation
 			if(formation == 1) { 
 				if(counterCounter == 0) {
 					oof = 1;
@@ -87,7 +106,36 @@ public class ObjectRunner {
 				counterCounter+=oof;
 			}
 			timer = System.currentTimeMillis();
+			oppositeInt = 158 - interval;
+			score++;
 		}
+	}
+	void randomWalls(int floor, int ceiling) {
+		int vertSpace = ceiling - floor;
+		coinFlip = generator.nextInt(3);
+		randHeight = (generator.nextInt(4) + 1)*vertSpace/5; 
+		randSpace = (generator.nextInt(4)+1)*vertSpace/10;
+		if(System.currentTimeMillis() - randTimer >= randInterval) {
+			if(coinFlip == 0) {
+				addBlock(new Block(GravityGuy.WIDTH, floor, 50, randHeight));
+			}else if(coinFlip == 1) {
+				addBlock(new Block(GravityGuy.WIDTH, ceiling-randHeight, 50, randHeight));
+			}else if(coinFlip == 2) {
+				addBlock(new Block(GravityGuy.WIDTH, floor, 50, randHeight));
+				//System.out.println(randHeight + " " + randSpace);
+				addBlock(new Block(GravityGuy.WIDTH, floor+randHeight+randSpace, 50, ceiling-floor-randHeight-randSpace));
+			}else if(coinFlip == 3) {
+				addBlock(new Block(GravityGuy.WIDTH, floor, 50, randHeight));
+				addBlock(new Block(GravityGuy.WIDTH, floor+vertSpace/5+randHeight, 50, ceiling-vertSpace/5-floor-randHeight));
+			}
+			intervalCount++; 
+			score+=5;
+			System.out.println(intervalCount);
+			randInterval = (generator.nextInt(3) + 1)*(700 - intervalCount*10);
+			randTimer = System.currentTimeMillis();
+		}
+	}
+	void reroll(int floor, int ceiling) {
 	}
 	void purgeObjects() {
 		for(int i = 0;i < BlockList.size();i++) {

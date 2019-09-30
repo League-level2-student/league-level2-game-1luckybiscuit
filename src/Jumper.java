@@ -31,7 +31,7 @@ public class Jumper extends GameObject {
 	}
 	void checkSpeed() {
 		if(stopped == false && x < 300) {
-			x++;
+			x+=2;
 		}
 	}
 }
