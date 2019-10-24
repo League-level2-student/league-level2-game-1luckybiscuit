@@ -21,7 +21,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	int currentState = 0;
 	Game() {
 		time = new Timer(1000/60,this);
-		jumper = new Jumper(400,GravityGuy.HEIGHT/2 - 50,50,50);
+		jumper = new Jumper(0,200,50,50);
 		or = new ObjectRunner(jumper);
 	}
 	void drawMenu(Graphics sad) {
@@ -37,6 +37,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	void drawGame(Graphics g) {
 		or.draw(g);
 		g.setFont(new Font("Arial", Font.BOLD, 45));
+		g.setColor(Color.GREEN);
 		g.drawString(Integer.toString(or.score), GravityGuy.WIDTH - 100, 40);
 	}
 	void update() {
@@ -79,7 +80,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			jumper.gravity *= -1;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_Q && currentState == MENU_STATE) {
-			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole!\nPress SPACE to help him avoid obstacles.\nPerhaps he can survive long enough to die of old age instead.");
+			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to help him avoid obstacles.\nPerhaps he can survive long enough to die of old age instead.");
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
 			currentState = ACTIVE_STATE;
