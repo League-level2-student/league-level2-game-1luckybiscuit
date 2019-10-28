@@ -164,26 +164,32 @@ public class ObjectRunner {
 			//System.out.println("Rand " + randSpace);
 			if(formation != 6 && formation != 5 && formation != 4) {
 				place();
+				if(coinFlip < 4) {
+					randomChunk = (generator.nextInt(10)+3);
+				}else {
+					randomChunk = (generator.nextInt(7)+3)*3;
+				}
 			}
 			chunkCount = 0;
-			randomChunk = (generator.nextInt(10)+3);
 			intervalCount++; 
-			System.out.println(intervalCount);
+			//System.out.println(intervalCount);
 		}
 	}
 	void place() {
+		System.out.println(coinFlip);
 		if(coinFlip == 0) {
 			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
 			//System.out.println("epic");
 		}else if(coinFlip == 1) {
 			addBlock(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight-50));
 		}else if(coinFlip == 2) {
-			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
-			//System.out.println(randHeight + " " + randSpace);
-			addBlock(new Block(GravityGuy.WIDTH, ceiling+randHeight+randSpace+50, 50, floor-ceiling-randHeight-randSpace-50));
+			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
+			System.out.println(vertSpace + " " + randHeight + " " + randSpace);
+			addBlock(new Block(GravityGuy.WIDTH, ceiling+randHeight+randSpace+50, 50, 50/*floor-ceiling-randHeight-randSpace-50*/));
 		}else if(coinFlip == 3) {
-			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
-			addBlock(new Block(GravityGuy.WIDTH, ceiling+vertSpace+randHeight+50, 50, floor-vertSpace-ceiling-randHeight-50));
+			System.out.println(vertSpace + " " + randHeight);
+			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
+			addBlock(new Block(GravityGuy.WIDTH, ceiling+randHeight+50, 50, 50 /*floor-ceiling-randHeight*/));
 		}else if(coinFlip == 4) {
 			for(int i = 0;i<5;i++) {
 				addBlock(new Block(GravityGuy.WIDTH+i*100, ceiling+generator.nextInt(floor - ceiling), 50, 50));
@@ -198,10 +204,10 @@ public class ObjectRunner {
 	void reroll() {
 		dimension = 10+(generator.nextInt(9)+1)*13;
 		altDimension = 10+(generator.nextInt(9)+1)*13;
-		vertSpace = (floor - ceiling)/5;
+		vertSpace = (floor - ceiling + 50)/50;
 		coinFlip = generator.nextInt(5);
-		randHeight = generator.nextInt(5)*vertSpace; 
-		randSpace = (generator.nextInt(4) + 1)*vertSpace;
+		randHeight = generator.nextInt(vertSpace)*50; 
+		randSpace = (generator.nextInt(vertSpace - 1)+1)*50;
 	}
 	void purgeObjects() {
 		for(int i = 0;i < BlockList.size();i++) {

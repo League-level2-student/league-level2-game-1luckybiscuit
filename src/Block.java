@@ -8,7 +8,7 @@ public class Block extends GameObject{
 	}
 
 	void draw(Graphics g) {
-		g.setColor(Color.BLUE);
+		g.setColor(Color.CYAN);
 		g.fillRect((int) x, (int)y, width, height);
 	}
 	void update() {
