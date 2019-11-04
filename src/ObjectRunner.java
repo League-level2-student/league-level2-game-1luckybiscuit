@@ -5,6 +5,7 @@ import java.util.Random;
 public class ObjectRunner {
 	Jumper jump;
 	ArrayList<Block> BlockList = new ArrayList();
+	ArrayList<Block> WallList = new ArrayList();
 	long initialTimer = 1000;
 	long timer;
 	Random generator = new Random();
@@ -28,6 +29,7 @@ public class ObjectRunner {
 	int function = addCounter;
 	int dimension;
 	int altDimension;
+	boolean vibeCheck;
 	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
@@ -50,15 +52,15 @@ public class ObjectRunner {
 		if(intervalCount <= 5) {
 			if(System.currentTimeMillis() - initialTimer > 0) {
 				if(intervalCount == 1) {
-					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 400));
+					addWall(new Block(GravityGuy.WIDTH, 100, 50, 400));
 				}else if(intervalCount == 2) {
-					addBlock(new Block(GravityGuy.WIDTH, 250, 50, 400));
+					addWall(new Block(GravityGuy.WIDTH, 250, 50, 400));
 				}else if(intervalCount == 3) {
-					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 150));
-					addBlock(new Block(GravityGuy.WIDTH, 500, 50, 150));
+					addWall(new Block(GravityGuy.WIDTH, 100, 50, 150));
+					addWall(new Block(GravityGuy.WIDTH, 500, 50, 150));
 				}else if(intervalCount == 4) {
-					addBlock(new Block(GravityGuy.WIDTH, 100, 50, 250));
-					addBlock(new Block(GravityGuy.WIDTH, 400, 50, 250));
+					addWall(new Block(GravityGuy.WIDTH, 100, 50, 250));
+					addWall(new Block(GravityGuy.WIDTH, 400, 50, 250));
 				}
 				score+=5;
 				initialTimer = System.currentTimeMillis()+1000;
@@ -156,6 +158,42 @@ public class ObjectRunner {
 			score++;
 		}
 	}
+	void bugCheck() {
+		vibeCheck = true;
+		for(Block i: WallList) {
+			for(Block o: BlockList) {
+				//wall checks in front and in back
+				//if top part of floor changes
+				//check 1: ceiling does not change
+				//check 2: floor does not change
+				if(coinFlip == 0 || coinFlip == 2) {
+					//left side
+					System.out.println(i.vertBox.getMinY() + " " + o.vertBox.getMaxY());
+					if((i.horiBox.getMinX() -50 <= o.horiBox.getMaxX() && i.vertBox.getMinY() != o.vertBox.getMaxY())) {
+						System.out.println("pre vibe check");
+						vibeCheck = false;
+					}
+					//right side
+					if((i.horiBox.getMaxX() + 50 >= o.horiBox.getMinX() && i.vertBox.getMinY() != o.vertBox.getMaxY())) {
+						System.out.println("post vibe check");
+						vibeCheck = false;
+					}
+				}
+				if(coinFlip == 1) {
+					//left side
+					if((i.horiBox.getMinX() - 50 <= o.horiBox.getMaxX() && i.vertBox.getMaxY() != o.vertBox.getMinY())) {
+						System.out.println("pre vibe check");
+						vibeCheck =  false;
+					}
+					//right side
+					if((i.horiBox.getMaxX() + 50 >= o.horiBox.getMinX() && i.vertBox.getMaxY() != o.vertBox.getMinY())) {
+						System.out.println("post vibe check");
+						vibeCheck = false;
+					}
+				}
+			}
+		}
+	}
 	void randomWalls() {
 		//vertSpace must not be less than 50
 		reroll();
@@ -163,10 +201,11 @@ public class ObjectRunner {
 			//System.out.println("Vert " + vertSpace);
 			//System.out.println("Rand " + randSpace);
 			if(formation != 6 && formation != 5 && formation != 4) {
-				place();
 				if(coinFlip < 4) {
+					place();
 					randomChunk = (generator.nextInt(10)+3);
 				}else {
+					place();
 					randomChunk = (generator.nextInt(7)+3)*3;
 				}
 			}
@@ -176,20 +215,22 @@ public class ObjectRunner {
 		}
 	}
 	void place() {
-		System.out.println(coinFlip);
+		bugCheck();
+		if(vibeCheck == false) {
+			randHeight -= 50;
+		}
 		if(coinFlip == 0) {
-			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
+			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
 			//System.out.println("epic");
 		}else if(coinFlip == 1) {
-			addBlock(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight-50));
+			addWall(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight-50));
 		}else if(coinFlip == 2) {
-			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
-			System.out.println(vertSpace + " " + randHeight + " " + randSpace);
-			addBlock(new Block(GravityGuy.WIDTH, ceiling+randHeight+randSpace+50, 50, 50/*floor-ceiling-randHeight-randSpace-50*/));
+			//System.out.println(vertSpace + " " + randHeight + " " + randSpace);
+			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
+			addWall(new Block(GravityGuy.WIDTH, ceiling+randHeight+randSpace+50, 50, floor-ceiling-randHeight-randSpace-50));
 		}else if(coinFlip == 3) {
-			System.out.println(vertSpace + " " + randHeight);
-			addBlock(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
-			addBlock(new Block(GravityGuy.WIDTH, ceiling+randHeight+50, 50, 50 /*floor-ceiling-randHeight*/));
+			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
+			addWall(new Block(GravityGuy.WIDTH, ceiling+randHeight+50, 50, floor-ceiling-randHeight));
 		}else if(coinFlip == 4) {
 			for(int i = 0;i<5;i++) {
 				addBlock(new Block(GravityGuy.WIDTH+i*100, ceiling+generator.nextInt(floor - ceiling), 50, 50));
@@ -205,9 +246,10 @@ public class ObjectRunner {
 		dimension = 10+(generator.nextInt(9)+1)*13;
 		altDimension = 10+(generator.nextInt(9)+1)*13;
 		vertSpace = (floor - ceiling + 50)/50;
-		coinFlip = generator.nextInt(5);
-		randHeight = generator.nextInt(vertSpace)*50; 
-		randSpace = (generator.nextInt(vertSpace - 1)+1)*50;
+		//coinFlip = generator.nextInt(5);
+		coinFlip = 0;
+		randHeight = generator.nextInt(vertSpace-1)*50;
+		randSpace = generator.nextInt(vertSpace)*20; 
 	}
 	void purgeObjects() {
 		for(int i = 0;i < BlockList.size();i++) {
@@ -221,15 +263,22 @@ public class ObjectRunner {
 		for(int i = 0;i < BlockList.size();i++) {
 			BlockList.get(i).draw(g);
 		}
+		for(int i = 0;i < WallList.size();i++) {
+			WallList.get(i).draw(g);
+		}
 	}
 	void update() {
 		for(int i = 0;i < BlockList.size();i++) {
 			BlockList.get(i).x -= oppositeInt;
 			BlockList.get(i).update();
 		}
+		for(int i = 0;i < WallList.size();i++) {
+			WallList.get(i).x -= oppositeInt;
+			WallList.get(i).update();
+		}
 		jump.vertBox.y += jump.velocity;
 		jump.horiBox.x++;
-		collide();
+		collision();
 		jump.update();
 		manageBlocks();
 		purgeObjects();
@@ -237,26 +286,35 @@ public class ObjectRunner {
 	void addBlock(Block b) {
 		BlockList.add(b);
 	}
-	void collide() {
+	void addWall(Block b) {
+		WallList.add(b);
+	}
+	void collision() {
 		for(Block i: BlockList) {
-			if(jump.horiBox.intersects(i.horiBox)) {
-				if(jump.horiBox.getMaxX() > i.vertBox.getMinX()) {
-					jump.stopped = true;
-					jump.x = (int) (i.vertBox.getMinX()-jump.width);
+			collide(i);
+		}
+		for(Block i: WallList) {
+			collide(i);
+		}
+	}
+	void collide(GameObject i) {
+		if(jump.horiBox.intersects(i.horiBox)) {
+			if(jump.horiBox.getMaxX() > i.vertBox.getMinX()) {
+				jump.stopped = true;
+				jump.x = (int) (i.vertBox.getMinX()-jump.width);
+			}
+		}else{
+			jump.stopped = false;
+			if(jump.vertBox.intersects(i.vertBox)) {
+				if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
+					jump.y = (int) (i.vertBox.getMaxY());
+					jump.velocity = 0;
 				}
-			}else{
-				jump.stopped = false;
-				if(jump.vertBox.intersects(i.vertBox)) {
-					if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
-						jump.y = (int) (i.vertBox.getMaxY());
-						jump.velocity = 0;
-					}
-					if(i.vertBox.getMaxY() > jump.vertBox.getMaxY() && jump.vertBox.getMaxY() > i.vertBox.getMinY()) {
-						jump.y = (int) (i.vertBox.getMinY() - jump.height);
-						jump.velocity = 0;
-					}
-					
+				if(i.vertBox.getMaxY() > jump.vertBox.getMaxY() && jump.vertBox.getMaxY() > i.vertBox.getMinY()) {
+					jump.y = (int) (i.vertBox.getMinY() - jump.height);
+					jump.velocity = 0;
 				}
+				
 			}
 		}
 	}
