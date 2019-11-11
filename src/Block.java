@@ -20,5 +20,7 @@ public class Block extends GameObject{
 			active = false;
 		}
 	}
-	
+	void setHeight(int height) {
+		this.height = height;
+	}
 }

@@ -62,7 +62,6 @@ public class ObjectRunner {
 					addWall(new Block(GravityGuy.WIDTH, 100, 50, 250));
 					addWall(new Block(GravityGuy.WIDTH, 400, 50, 250));
 				}
-				score+=5;
 				initialTimer = System.currentTimeMillis()+1000;
 				intervalCount++; 
 			}
@@ -158,39 +157,80 @@ public class ObjectRunner {
 			score++;
 		}
 	}
+	boolean vibeCheck(int x, int y, int xx, int yy) {
+		if(Math.abs(xx - x) <= 75 && Math.abs(yy - y) <= 50) {
+			return false;
+		}else {
+			return true;
+		}
+	}
 	void bugCheck() {
-		vibeCheck = true;
+		//vibeCheck = true;
 		for(Block i: WallList) {
 			for(Block o: BlockList) {
+				if(coinFlip == 0 || coinFlip == 2) {
+					if(vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x + o.horiBox.width/2, i.vertBox.y, o.vertBox.y) == false) {
+						randHeight -= 50;
+					}
+				}
+				if(coinFlip == 1) {
+					if(vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x + o.horiBox.width/2, i.vertBox.y - i.vertBox.height, o.vertBox.y - o.vertBox.height) == false) {
+						randHeight -= 50;
+					}
+				}
+				/*if(coinFlip == 1) {
+					//bottom
+					if(o.vertBox.getMaxY() >= 400) {
+						System.out.println(i.vertBox.y + " " + (o.vertBox.y + o.vertBox.height));
+						//left side
+						if((i.horiBox.x -50 <= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println("pre vibe check");
+							vibeCheck = false;
+						}
+						//right side
+						if((i.horiBox.x + 50 >= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println("post vibe check");
+							vibeCheck = false;
+						}
+					}
+				}
 				//wall checks in front and in back
 				//if top part of floor changes
 				//check 1: ceiling does not change
 				//check 2: floor does not change
 				if(coinFlip == 0 || coinFlip == 2) {
-					//left side
-					System.out.println(i.vertBox.getMinY() + " " + o.vertBox.getMaxY());
-					if((i.horiBox.getMinX() -50 <= o.horiBox.getMaxX() && i.vertBox.getMinY() != o.vertBox.getMaxY())) {
-						System.out.println("pre vibe check");
-						vibeCheck = false;
-					}
-					//right side
-					if((i.horiBox.getMaxX() + 50 >= o.horiBox.getMinX() && i.vertBox.getMinY() != o.vertBox.getMaxY())) {
-						System.out.println("post vibe check");
-						vibeCheck = false;
+					//top
+					if(o.vertBox.getMaxY() < 400) {
+						//left side
+						if((i.horiBox.x -50 <= o.horiBox.x + o.horiBox.width && i.horiBox.x >= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println(i.vertBox.y + " " + (o.vertBox.y + o.vertBox.height));
+							System.out.println("pre vibe check");
+							vibeCheck = false;
+						}
+						//right side
+						if((i.horiBox.x + 50 >= o.horiBox.x + o.horiBox.width && i.horiBox.x <= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println(i.vertBox.y + " " + (o.vertBox.y + o.vertBox.height));
+							System.out.println("post vibe check");
+							vibeCheck = false;
+						}
 					}
 				}
 				if(coinFlip == 1) {
-					//left side
-					if((i.horiBox.getMinX() - 50 <= o.horiBox.getMaxX() && i.vertBox.getMaxY() != o.vertBox.getMinY())) {
-						System.out.println("pre vibe check");
-						vibeCheck =  false;
+					//bottom
+					if(o.vertBox.getMaxY() >= 400) {
+						System.out.println(i.vertBox.y + " " + (o.vertBox.y + o.vertBox.height));
+						//left side
+						if((i.horiBox.x -50 <= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println("pre vibe check");
+							vibeCheck = false;
+						}
+						//right side
+						if((i.horiBox.x + 50 >= o.horiBox.x + o.horiBox.width && i.vertBox.y != o.vertBox.y + o.vertBox.height)) {
+							System.out.println("post vibe check");
+							vibeCheck = false;
+						}
 					}
-					//right side
-					if((i.horiBox.getMaxX() + 50 >= o.horiBox.getMinX() && i.vertBox.getMaxY() != o.vertBox.getMinY())) {
-						System.out.println("post vibe check");
-						vibeCheck = false;
-					}
-				}
+				}*/
 			}
 		}
 	}
@@ -215,15 +255,30 @@ public class ObjectRunner {
 		}
 	}
 	void place() {
-		bugCheck();
-		if(vibeCheck == false) {
-			randHeight -= 50;
+		for(Block i: WallList) {
+			for(Block o: BlockList) {
+				if(coinFlip == 0 || coinFlip == 2) {
+					if(vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x + o.horiBox.width/2, i.vertBox.y, o.vertBox.y) == false) {
+						System.out.println("vibe check");
+						i.setHeight(i.vertBox.height - 50);
+					}
+				}
+				if(coinFlip == 1) {
+					if(vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x + o.horiBox.width/2, i.vertBox.y - i.vertBox.height, o.vertBox.y - o.vertBox.height) == false) {
+						System.out.println("vibe check");
+						i.setHeight(i.vertBox.height - 50);
+					}
+				}
+			}
 		}
+		/*if(vibeCheck == false) {
+			randHeight -= 50;
+		}*/
 		if(coinFlip == 0) {
-			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight-50));
+			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
 			//System.out.println("epic");
 		}else if(coinFlip == 1) {
-			addWall(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight-50));
+			addWall(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight));
 		}else if(coinFlip == 2) {
 			//System.out.println(vertSpace + " " + randHeight + " " + randSpace);
 			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
@@ -245,10 +300,10 @@ public class ObjectRunner {
 	void reroll() {
 		dimension = 10+(generator.nextInt(9)+1)*13;
 		altDimension = 10+(generator.nextInt(9)+1)*13;
-		vertSpace = (floor - ceiling + 50)/50;
+		vertSpace = (floor - (ceiling + 50))/50;
 		//coinFlip = generator.nextInt(5);
-		coinFlip = 0;
-		randHeight = generator.nextInt(vertSpace-1)*50;
+		coinFlip = 2;
+		randHeight = generator.nextInt(vertSpace + 1)*50;
 		randSpace = generator.nextInt(vertSpace)*20; 
 	}
 	void purgeObjects() {
