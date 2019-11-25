@@ -11,10 +11,12 @@ public class Block extends GameObject{
 	void draw(Graphics g) {
 		if(alerted) {
 			g.setColor(Color.RED);
+			g.fillOval(x+width/2-75, y-50, 150, 100);
+			g.fillOval(x+width/2-75, y+height-50, 150, 100);
 		}else {
 			g.setColor(Color.CYAN);
 		}
-		g.fillRect((int) x, (int)y, width, height);
+		g.fillRect(x, y, width, height);
 	}
 	void update() {
 		setBounds();

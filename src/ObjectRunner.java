@@ -162,17 +162,27 @@ public class ObjectRunner {
 	void cheque() {
 		for(Block i: WallList) {
 			for(Block o: BlockList) {
-				if(i.vertBox.y == ceiling && vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x, o.horiBox.x+o.horiBox.width, i.vertBox.y + i.vertBox.height, o.vertBox.y) == false) {
-					o.alerted = true;
-					System.out.println((i.horiBox.x+i.horiBox.width/2) + " " + (o.horiBox.x) + " " + (o.horiBox.x + o.horiBox.width) + " " +(i.vertBox.y + i.vertBox.height) + " " + (o.vertBox.y + o.vertBox.height));
-					i.setHeight(i.vertBox.height - 50);
+				if(o.box.intersects(i.botColBox)) {
+					System.out.println("okay");
 				}
-				/*if(i.vertBox.y >= floor-randHeight+50) {
-					if(vibeCheck(i.horiBox.x+i.horiBox.width/2, o.horiBox.x + o.horiBox.width/2, i.vertBox.y, o.vertBox.y) == false) {
-						System.out.println((i.horiBox.x+i.horiBox.width/2) +" " + (o.horiBox.x + o.horiBox.width/2) + " " + i.vertBox.y + " " + o.vertBox.y);
-						i.setHeight(i.vertBox.height - 50);
-						i.setY(i.vertBox.y + 50);
-					}
+				if(o.box.intersects(i.topColBox)) {
+					System.out.println("okay2");
+				}
+				/*if(i.y == o.y+50 && vibeCheck(i.x+i.width/2, o.x, o.x+o.width, i.y + i.height, o.y) == false) {
+					
+					System.out.println(i.y + " " + (o.y+o.height));
+					o.alerted = true;
+					//System.out.println((i.x+i.width/2) + " " + (o.x) + " " + (o.x + o.width) + " " +(i.y+i.height) + " " + (o.y));
+					//System.out.println("wtf");
+					i.setHeight(i.height - 50);
+				}
+				if(i.y + i.height == o.y && vibeCheck(i.x+i.width/2, o.x, o.x+o.width, i.y, o.y + o.height) == false) {
+					o.alerted = true;
+					//System.out.println((i.x+i.width/2) + " " + (o.x) + " " + (o.x + o.width) + " " +(i.y) + " " + (o.y + o.height));
+					//System.out.println(i.y);
+					i.setY((int)i.y + 50);
+					//System.out.println(i.y);
+					i.setHeight(i.height - 50);
 				}*/
 			}
 		}
@@ -203,7 +213,7 @@ public class ObjectRunner {
 	}*/
 	boolean vibeCheck(int x, int xx, int xxx, int y, int yy) {
 		//fillRect(x, y, x-xx, yy-y);
-		if((Math.abs(xx - x) <= 100 || Math.abs(xxx - x) <= 100) && Math.abs(yy - y) < 50) {
+		if((Math.abs(xx - x) <= 75 || Math.abs(xxx - x) <= 75) && Math.abs(yy - y) <= 50) {
 			return false;
 		}else {
 			return true;
@@ -215,7 +225,8 @@ public class ObjectRunner {
 			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, vertSpace*50));
 			//System.out.println("epic");
 		}else if(coinFlip == 1) {
-			addWall(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight));
+			addWall(new Block(GravityGuy.WIDTH, ceiling + 50, 50, vertSpace*50));
+			//addWall(new Block(GravityGuy.WIDTH, floor-randHeight+50, 50, randHeight));
 		}else if(coinFlip == 2) {
 			//System.out.println(vertSpace + " " + randHeight + " " + randSpace);
 			addWall(new Block(GravityGuy.WIDTH, ceiling, 50, randHeight));
@@ -239,7 +250,7 @@ public class ObjectRunner {
 		altDimension = 10+(generator.nextInt(9)+1)*13;
 		vertSpace = (floor - (ceiling + 50))/50;
 		//coinFlip = generator.nextInt(5);
-		coinFlip = 0;
+		coinFlip = 1;
 		randHeight = (generator.nextInt(vertSpace)+1)*50;
 		randSpace = generator.nextInt(vertSpace)*20; 
 	}
@@ -252,11 +263,14 @@ public class ObjectRunner {
 	}
 	void draw(Graphics g) {
 		jump.draw(g);
-		for(int i = 0;i < BlockList.size();i++) {
-			BlockList.get(i).draw(g);
+		for(Block i: BlockList) {
+			i.draw(g);
 		}
-		for(int i = 0;i < WallList.size();i++) {
-			WallList.get(i).draw(g);
+		for(Block i: WallList) {
+			i.draw(g);
+			g.setColor(Color.RED);
+			g.fillOval(i.x+i.width/2-75, i.y-50, 150, 100);
+			g.fillOval(i.x+i.width/2-75, i.y+i.height-50, 150, 100);
 		}
 	}
 	void update() {
@@ -309,5 +323,6 @@ public class ObjectRunner {
 				
 			}
 		}
+		
 	}
 }
