@@ -25,7 +25,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	int currentState = 0;
 	Game() {
 		time = new Timer(1000/60,this);
-		jumper = new Jumper(0,200,50,50);
+		jumper = new Jumper(0,200,50,50, "jumper");
 		or = new ObjectRunner(jumper);
 		try {
             gradient = ImageIO.read(this.getClass().getResourceAsStream("gradient.jpg"));
@@ -107,7 +107,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
 			currentState = ACTIVE_STATE;
 			time = new Timer(1000/60,this);
-			jumper = new Jumper(0,200,50,50);
+			jumper = new Jumper(0,200,50,50, "jumper");
 			or = new ObjectRunner(jumper);
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == END_STATE) {

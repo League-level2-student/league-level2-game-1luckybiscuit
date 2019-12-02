@@ -6,8 +6,8 @@ public class Jumper extends GameObject {
 	int velocity = 1;
 	boolean gravityChanged = false;
 	boolean stopped = false;
-	Jumper(int x, int y, int width, int height) {
-		super(x, y, width, height);
+	Jumper(int x, int y, int width, int height, String type) {
+		super(x, y, width, height, type);
 		// TODO Auto-generated constructor stub
 		
 	}
@@ -16,7 +16,6 @@ public class Jumper extends GameObject {
 		g.fillRect((int)x, (int)y, width, height);
 	}
 	void update() {
-		checkSpeed();
 		velocity += gravity;
 		//System.out.println(velocity);
 		y += velocity;
@@ -29,9 +28,9 @@ public class Jumper extends GameObject {
 			active = false;
 		}
 	}
-	void checkSpeed() {
+	void checkSpeed(float difficulty) {
 		if(stopped == false && x < 400) {
-			x+=2;
+			x = x+ 2 + (int)difficulty;
 		}
 	}
 }
