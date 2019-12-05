@@ -24,6 +24,7 @@ public class ObjectRunner {
 	int counterCounter = 1;
 	int oof = 1;
 	int score = 0;
+	int blockCount = 0;
 	int chunkCount = 0;
 	int randomChunk = 5;
 	int intStart = 5;
@@ -52,7 +53,11 @@ public class ObjectRunner {
 		if(intervalCount <= intStart) {
 			if(System.currentTimeMillis() - initialTimer > 0) {
 				if(intervalCount == intStart-3) {
-					addWall(new Block(GravityGuy.WIDTH, 100, 50, 400, "top"));
+					//addWall(new Block(GravityGuy.WIDTH, 100, 50, 400, "top"));
+					addWall(new Block(GravityGuy.WIDTH, 100, 50, 100, "top"));
+					addWall(new Block(GravityGuy.WIDTH, 200, 50, 100, "top"));
+					addWall(new Block(GravityGuy.WIDTH, 300, 50, 100, "top"));
+					addWall(new Block(GravityGuy.WIDTH, 400, 50, 100, "top"));
 				}else if(intervalCount == intStart-2) {
 					addWall(new Block(GravityGuy.WIDTH, 250, 50, 400, "bottom"));
 				}else if(intervalCount == intStart-1) {
@@ -169,22 +174,29 @@ public class ObjectRunner {
 	}
 	void randomWalls() {
 		//vertSpace must not be less than 50
-		reroll();
-		if(chunkCount == randomChunk) {
-			//System.out.println("Vert " + vertSpace);
-			//System.out.println("Rand " + randSpace);
-			if(formation != 6 && formation != 5 && formation != 4) {
-				if(coinFlip < 4) {
+		if(formation != 6 && formation != 5 && formation != 4) {
+			if(coinFlip < 4) {
+				if(chunkCount == randomChunk) {
+					reroll();
 					place();
+					intervalCount++; 
+					chunkCount = 0;
 					randomChunk = (generator.nextInt(10)+3);
-				}else {
-					place();
-					randomChunk = (generator.nextInt(7)+3)*3;
+				}
+			}else {
+				if(blockCount < 5) {
+					if(chunkCount == randomChunk) {
+						place();
+						blockCount++; 
+						chunkCount = 0;
+						randomChunk = (generator.nextInt(3)+3);
+				}
+				}else if(blockCount == 5) {
+					blockCount = 0;
+					intervalCount++;
+					reroll();
 				}
 			}
-			chunkCount = 0;
-			intervalCount++; 
-			//System.out.println(intervalCount);
 		}
 	}
 	void place() {
@@ -202,23 +214,19 @@ public class ObjectRunner {
 			addWall(new Block(wallSetPoint, ceiling, 50, randHeight, "top"));
 			addWall(new Block(wallSetPoint, ceiling+randHeight+50, 50, floor-ceiling-randHeight, "bottom"));
 		}else if(coinFlip == 4) {
-			for(int i = 0;i<5;i++) {
-				addBlock(new Block(wallSetPoint+i*200, ceiling+generator.nextInt(floor - ceiling - 100), 50, 50, ""));
-			}
+			int hm = generator.nextInt(floor - ceiling);
+			addBlock(new Block(wallSetPoint, ceiling + hm, 50, 50, ""));
 		}else if(coinFlip == 5) {
-			for(int i = 0;i<5;i++) {
-				int hm = ceiling+generator.nextInt(floor - ceiling - 100) - 100;
-				addBlock(new Block(wallSetPoint+i*200, hm, 50, 50, ""));
-				addBlock(new Block(wallSetPoint+i*200, hm + 150, 50, 50, ""));
-			}
+			int hm = generator.nextInt(floor - ceiling);
+			addBlock(new Block(wallSetPoint, ceiling + hm, 50, 50, ""));
+			addBlock(new Block(wallSetPoint, floor - hm - 50, 50, 50, ""));
 		}
 	}
 	void reroll() {
 		dimension = 10+(generator.nextInt(9)+1)*13;
 		altDimension = 10+(generator.nextInt(9)+1)*13;
 		vertSpace = (floor - (ceiling + 50))/50;
-		//coinFlip = generator.nextInt(6);
-		coinFlip = 5;
+		coinFlip = generator.nextInt(6);
 		randHeight = (generator.nextInt(vertSpace)+1)*50;
 		randSpace = generator.nextInt(vertSpace)*20; 
 	}
@@ -238,22 +246,27 @@ public class ObjectRunner {
 			i.draw(g);
 		}
 	}
-	void update() {
-		for(int i = 0;i < BlockList.size();i++) {
-			BlockList.get(i).x -= oppositeInt;
-			BlockList.get(i).update();
-		}
-		for(int i = 0;i < WallList.size();i++) {
-			WallList.get(i).x -= oppositeInt;
-			WallList.get(i).update();
+	void update(boolean active) {
+		if(active) {
+			manageBlocks();
+			purgeObjects();
+			for(int i = 0;i < BlockList.size();i++) {
+				BlockList.get(i).x -= oppositeInt;
+				BlockList.get(i).update();
+			}
+			for(int i = 0;i < WallList.size();i++) {
+				WallList.get(i).x -= oppositeInt;
+				WallList.get(i).update();
+			}
 		}
 		jump.vertBox.y += jump.velocity;
-		jump.horiBox.x++;
+		if(jump.stopped) {
+			
+		}
+		jump.horiBox.x += oppositeInt;
 		collision();
 		jump.checkSpeed(oppositeInt/10);
 		jump.update();
-		manageBlocks();
-		purgeObjects();
 	}
 	void addBlock(Block b) {
 		BlockList.add(b);
@@ -271,9 +284,11 @@ public class ObjectRunner {
 	}
 	void collide(GameObject i) {
 		if(jump.horiBox.intersects(i.horiBox)) {
-			if(jump.horiBox.getMaxX() > i.vertBox.getMinX()) {
+			if(jump.horiBox.getMaxX() > i.horiBox.getMinX()) {
 				jump.stopped = true;
-				jump.x = (int) (i.vertBox.getMinX()-jump.width);
+				if(jump.stopped) {
+					jump.x = (int) (i.horiBox.getMinX()-jump.width);
+				}
 			}
 		}else{
 			jump.stopped = false;

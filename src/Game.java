@@ -35,15 +35,15 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		}
 	}
 	void drawMenu(Graphics sad) {
-		sad.setColor(Color.BLACK);
-		sad.fillRect(0, 0, GravityGuy.WIDTH, GravityGuy.HEIGHT);
+		sad.drawImage(Game.gradient, 0, 0, GravityGuy.WIDTH+400, GravityGuy.HEIGHT, null);
+		or.draw(sad);
 		sad.setColor(Color.CYAN);
 		sad.setFont(new Font("Arial", Font.BOLD, 100));
 		sad.drawString("GRAVITY LAD", 50, 250);
 		sad.setFont(new Font("Arial", Font.PLAIN, 25));
 		sad.drawString("A \"completely original\" game by Lukas Nepomuceno", 100, 350);
-		sad.drawString("Press Q for mission debrief", 230, 450);
-		sad.drawString("Press ENTER to start", 260, 550);
+		sad.drawString("Press Q for mission debrief", 240, 450);
+		sad.drawString("Press ENTER to start", 270, 550);
 	}
 	void drawGame(Graphics g) {
 		g.drawImage(Game.gradient, 0, 0, GravityGuy.WIDTH+400, GravityGuy.HEIGHT, null);
@@ -53,7 +53,11 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		g.drawString(Integer.toString(or.score), GravityGuy.WIDTH - 100, 40);
 	}
 	void update() {
-		or.update();
+		if(currentState == MENU_STATE) {
+			or.update(false);
+		}else {
+			or.update(true);
+		}
 		if(jumper.active == false) {
 			System.out.println("ded");
 			currentState = END_STATE;
@@ -83,7 +87,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		repaint();
-		if(currentState == ACTIVE_STATE){
+		if(currentState == ACTIVE_STATE || currentState == MENU_STATE){
             update();
 		}
 	}
@@ -106,12 +110,12 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
 			currentState = ACTIVE_STATE;
-			time = new Timer(1000/60,this);
-			jumper = new Jumper(0,200,50,50, "jumper");
-			or = new ObjectRunner(jumper);
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == END_STATE) {
 			currentState = MENU_STATE;
+			time = new Timer(1000/60,this);
+			jumper = new Jumper(0,200,50,50, "jumper");
+			or = new ObjectRunner(jumper);
 		}
 	}
 	@Override

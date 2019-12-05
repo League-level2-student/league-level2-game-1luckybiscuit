@@ -13,7 +13,10 @@ public class Jumper extends GameObject {
 	}
 	void draw(Graphics g) {
 		g.setColor(Color.GREEN);
-		g.fillRect((int)x, (int)y, width, height);
+		g.fillRect(x, y, width, height);
+		g.setColor(Color.RED);
+		//g.fillRect(horiBox.x, horiBox.y, horiBox.width, horiBox.height);
+		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);
 	}
 	void update() {
 		velocity += gravity;
@@ -29,8 +32,8 @@ public class Jumper extends GameObject {
 		}
 	}
 	void checkSpeed(float difficulty) {
-		if(stopped == false && x < 400) {
-			x = x+ 2 + (int)difficulty;
+		if(stopped == false && x < 375) {
+			x = x + 2 + (int)difficulty;
 		}
 	}
 }

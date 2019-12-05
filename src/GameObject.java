@@ -25,7 +25,7 @@ public class GameObject {
 			checkPoint = y;
 		}
 		active = true;
-		vertBox = new Rectangle(x+1,y,width-1,height);
+		vertBox = new Rectangle(x,y,width-2,height);
 		horiBox = new Rectangle(x,y + 1,width,height - 2);
 		box = new Rectangle(x,y,width,height);
 		sensorBox = new Rectangle(x+width/2-75,checkPoint-50,150,100);
@@ -49,7 +49,7 @@ public class GameObject {
 			checkPoint = y;
 		}
 		box = new Rectangle(x,y,width,height);
-		vertBox = new Rectangle(x+1,y,width-1,height);
+		vertBox = new Rectangle(x,y,width-2,height);
 		horiBox = new Rectangle(x,y + 1,width,height - 2);
 		sensorBox = new Rectangle(x+width/2-75,checkPoint-50,150,100);
 	}
