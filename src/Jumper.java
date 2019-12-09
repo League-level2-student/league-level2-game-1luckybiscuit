@@ -12,16 +12,21 @@ public class Jumper extends GameObject {
 		
 	}
 	void draw(Graphics g) {
-		g.setColor(Color.GREEN);
+		if(gravity == -1) {
+			g.drawImage(Game.lad , x, y + height, width, -height, null);
+		}else {
+			g.drawImage(Game.lad , x, y, width, height, null);
+		}
+		/*g.setColor(Color.GREEN);
 		g.fillRect(x, y, width, height);
 		g.setColor(Color.RED);
 		//g.fillRect(horiBox.x, horiBox.y, horiBox.width, horiBox.height);
-		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);
+		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);*/
 	}
 	void update() {
-		velocity += gravity;
+		//velocity += gravity;
 		//System.out.println(velocity);
-		y += velocity;
+		//y += velocity;
 		setBounds();
 		checkBounds();
 		//replace with actual velocity

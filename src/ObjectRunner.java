@@ -167,7 +167,7 @@ public class ObjectRunner {
 			for(Block o: BlockList) {
 				if(o.box.intersects(i.sensorBox)) {
 					i.shorten();
-					System.out.println("okay");
+					//System.out.println("okay");
 				}
 			}
 		}
@@ -190,7 +190,7 @@ public class ObjectRunner {
 						blockCount++; 
 						chunkCount = 0;
 						randomChunk = (generator.nextInt(3)+3);
-				}
+					}
 				}else if(blockCount == 5) {
 					blockCount = 0;
 					intervalCount++;
@@ -215,7 +215,7 @@ public class ObjectRunner {
 			addWall(new Block(wallSetPoint, ceiling+randHeight+50, 50, floor-ceiling-randHeight, "bottom"));
 		}else if(coinFlip == 4) {
 			int hm = generator.nextInt(floor - ceiling);
-			addBlock(new Block(wallSetPoint, ceiling + hm, 50, 50, ""));
+			addBlock(new Block(wallSetPoint, ceiling + hm, 100, 100, ""));
 		}else if(coinFlip == 5) {
 			int hm = generator.nextInt(floor - ceiling);
 			addBlock(new Block(wallSetPoint, ceiling + hm, 50, 50, ""));
@@ -259,10 +259,8 @@ public class ObjectRunner {
 				WallList.get(i).update();
 			}
 		}
-		jump.vertBox.y += jump.velocity;
-		if(jump.stopped) {
-			
-		}
+		jump.velocity += jump.gravity;
+		//jump.vertBox.y += jump.velocity;
 		jump.horiBox.x += oppositeInt;
 		collision();
 		jump.checkSpeed(oppositeInt/10);
@@ -275,14 +273,34 @@ public class ObjectRunner {
 		WallList.add(b);
 	}
 	void collision() {
-		for(Block i: BlockList) {
-			collide(i);
-		}
-		for(Block i: WallList) {
-			collide(i);
+		//jump.y+=jump.velocity;
+		for(int o = 0;o < Math.abs(jump.velocity);o++) {
+			jump.y+=jump.gravity;
+			/*for(Block i: BlockList) {
+				collide(i);
+			}
+			for(Block i: WallList) {
+				collide(i);
+			}*/
 		}
 	}
+	float distanceFormula(int x, int y, int xx, int yy) {
+		//y comes from top
+		System.out.println((float) ((y-yy)/(x-xx)));
+		return ((float) (y-yy)/(x-xx));	
+	}
 	void collide(GameObject i) {
+		/*if(jump.vertBox.intersects(i.vertBox)) {
+			if(distanceFormula(jump.x,jump.y,i.x,i.y)>0) {
+				jump.velocity = 0;
+				System.out.println("positive\n");
+				jump.y = (int) (i.y+i.height);
+			}else if(distanceFormula(jump.x,jump.y,i.x,i.y)<0) {
+				jump.velocity = 0;
+				System.out.println("negative\n");
+				jump.y = (int) (i.y - jump.height);
+			}
+		}*/
 		if(jump.horiBox.intersects(i.horiBox)) {
 			if(jump.horiBox.getMaxX() > i.horiBox.getMinX()) {
 				jump.stopped = true;
@@ -292,7 +310,7 @@ public class ObjectRunner {
 			}
 		}else{
 			jump.stopped = false;
-			if(jump.vertBox.intersects(i.vertBox)) {
+			/*if(jump.vertBox.intersects(i.vertBox)) {
 				if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
 					jump.y = (int) (i.vertBox.getMaxY());
 					jump.velocity = 0;
@@ -301,8 +319,7 @@ public class ObjectRunner {
 					jump.y = (int) (i.vertBox.getMinY() - jump.height);
 					jump.velocity = 0;
 				}
-				
-			}
+			}*/
 		}
 		
 	}

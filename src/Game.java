@@ -16,6 +16,7 @@ import javax.swing.Timer;
 
 public class Game extends JPanel implements ActionListener, KeyListener {
 	public static BufferedImage gradient;
+	public static BufferedImage lad;
 	Timer time;
 	Jumper jumper;
 	ObjectRunner or;
@@ -29,6 +30,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		or = new ObjectRunner(jumper);
 		try {
             gradient = ImageIO.read(this.getClass().getResourceAsStream("gradient.jpg"));
+            lad = ImageIO.read(this.getClass().getResourceAsStream("lad lol.png"));
 		} catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
