@@ -106,6 +106,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 			jumper.gravity *= -1;
+			jumper.vertStopped = false;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_Q && currentState == MENU_STATE) {
 			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity.\nPerhaps he can survive long enough to die of old age instead.");

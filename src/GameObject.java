@@ -47,6 +47,8 @@ public class GameObject {
 			checkPoint = y+height;
 		}else if(type.equals("bottom")) {
 			checkPoint = y;
+		}else {
+			checkPoint = y;
 		}
 		box = new Rectangle(x,y,width,height);
 		vertBox = new Rectangle(x,y,width-2,height);

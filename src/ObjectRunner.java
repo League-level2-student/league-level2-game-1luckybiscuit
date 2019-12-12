@@ -259,8 +259,8 @@ public class ObjectRunner {
 				WallList.get(i).update();
 			}
 		}
-		jump.velocity += jump.gravity;
-		//jump.vertBox.y += jump.velocity;
+		//jump.velocity += jump.gravity;
+		jump.vertBox.y += jump.velocity;
 		jump.horiBox.x += oppositeInt;
 		collision();
 		jump.checkSpeed(oppositeInt/10);
@@ -274,52 +274,49 @@ public class ObjectRunner {
 	}
 	void collision() {
 		//jump.y+=jump.velocity;
-		for(int o = 0;o < Math.abs(jump.velocity);o++) {
+		/*for(int o = 0;o < Math.abs(jump.velocity);o++) {
 			jump.y+=jump.gravity;
-			/*for(Block i: BlockList) {
-				collide(i);
-			}
-			for(Block i: WallList) {
-				collide(i);
-			}*/
+		}*/
+		for(Block i: BlockList) {
+			collide(i);
+		}
+		for(Block i: WallList) {
+			collide(i);
+		}
+	}
+	boolean checkPrediction(int jumpY, int blockY, int boxY) {
+		if(Math.abs(jumpY-blockY) < Math.abs(jumpY-boxY)) {
+			return false;
+		}else {
+			return true;
 		}
 	}
 	float distanceFormula(int x, int y, int xx, int yy) {
 		//y comes from top
-		System.out.println((float) ((y-yy)/(x-xx)));
+		System.out.println((float) ((float)(y-yy)/(float)(x-xx)));
 		return ((float) (y-yy)/(x-xx));	
 	}
 	void collide(GameObject i) {
-		/*if(jump.vertBox.intersects(i.vertBox)) {
-			if(distanceFormula(jump.x,jump.y,i.x,i.y)>0) {
-				jump.velocity = 0;
+		if(jump.vertBox.intersects(i.vertBox)) {
+			jump.vertStopped = true;
+			jump.velocity = 0;
+			if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)>0) {
 				System.out.println("positive\n");
 				jump.y = (int) (i.y+i.height);
-			}else if(distanceFormula(jump.x,jump.y,i.x,i.y)<0) {
-				jump.velocity = 0;
+			}else if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)<=0) {
 				System.out.println("negative\n");
-				jump.y = (int) (i.y - jump.height);
+				jump.y = (int) (i.y-jump.height);
 			}
-		}*/
+			jump.update();
+		}
 		if(jump.horiBox.intersects(i.horiBox)) {
 			if(jump.horiBox.getMaxX() > i.horiBox.getMinX()) {
 				jump.stopped = true;
-				if(jump.stopped) {
-					jump.x = (int) (i.horiBox.getMinX()-jump.width);
-				}
+				//jump.x = (int) (i.horiBox.getMinX()-jump.width);
+				//jump.update();
 			}
 		}else{
 			jump.stopped = false;
-			/*if(jump.vertBox.intersects(i.vertBox)) {
-				if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
-					jump.y = (int) (i.vertBox.getMaxY());
-					jump.velocity = 0;
-				}
-				if(i.vertBox.getMaxY() > jump.vertBox.getMaxY() && jump.vertBox.getMaxY() > i.vertBox.getMinY()) {
-					jump.y = (int) (i.vertBox.getMinY() - jump.height);
-					jump.velocity = 0;
-				}
-			}*/
 		}
 		
 	}

@@ -5,6 +5,7 @@ public class Jumper extends GameObject {
 	int gravity = 1;
 	int velocity = 1;
 	boolean gravityChanged = false;
+	boolean vertStopped = false;
 	boolean stopped = false;
 	Jumper(int x, int y, int width, int height, String type) {
 		super(x, y, width, height, type);
@@ -17,16 +18,14 @@ public class Jumper extends GameObject {
 		}else {
 			g.drawImage(Game.lad , x, y, width, height, null);
 		}
-		/*g.setColor(Color.GREEN);
-		g.fillRect(x, y, width, height);
-		g.setColor(Color.RED);
-		//g.fillRect(horiBox.x, horiBox.y, horiBox.width, horiBox.height);
-		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);*/
+		g.setColor(Color.GREEN);
+		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);
 	}
 	void update() {
-		//velocity += gravity;
+		velocity += gravity;
 		//System.out.println(velocity);
-		//y += velocity;
+		y += velocity;
+		//y += 5*gravity;
 		setBounds();
 		checkBounds();
 		//replace with actual velocity
