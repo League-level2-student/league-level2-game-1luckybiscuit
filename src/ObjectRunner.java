@@ -260,7 +260,7 @@ public class ObjectRunner {
 			}
 		}
 		//jump.velocity += jump.gravity;
-		jump.vertBox.y += jump.velocity;
+		//jump.vertBox.y += jump.velocity;
 		jump.horiBox.x += oppositeInt;
 		collision();
 		jump.checkSpeed(oppositeInt/10);
@@ -274,14 +274,20 @@ public class ObjectRunner {
 	}
 	void collision() {
 		//jump.y+=jump.velocity;
-		/*for(int o = 0;o < Math.abs(jump.velocity);o++) {
-			jump.y+=jump.gravity;
-		}*/
-		for(Block i: BlockList) {
-			collide(i);
-		}
-		for(Block i: WallList) {
-			collide(i);
+		for(int o = 0;o < Math.abs(jump.velocity);o++) {
+			jump.vertBox.y += jump.gravity;
+			for(Block i: BlockList) {
+				collide(i);
+			}
+			for(Block i: WallList) {
+				collide(i);
+			}
+			if(jump.vertStopped) {
+				jump.y -= jump.gravity;
+			}else {
+				jump.y+=jump.gravity;
+			}	
+			jump.setBounds();
 		}
 	}
 	boolean checkPrediction(int jumpY, int blockY, int boxY) {
@@ -297,18 +303,21 @@ public class ObjectRunner {
 		return ((float) (y-yy)/(x-xx));	
 	}
 	void collide(GameObject i) {
-		if(jump.vertBox.intersects(i.vertBox)) {
+		if(jump.box.intersects(i.box)) {
+			System.out.println(jump.gravity);
 			jump.vertStopped = true;
 			jump.velocity = 0;
-			if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)>0) {
+			/*if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)>0) {
 				System.out.println("positive\n");
 				jump.y = (int) (i.y+i.height);
 			}else if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)<=0) {
 				System.out.println("negative\n");
 				jump.y = (int) (i.y-jump.height);
-			}
-			jump.update();
+			}*/
+		}else {
+			jump.vertStopped = false;
 		}
+		/*
 		if(jump.horiBox.intersects(i.horiBox)) {
 			if(jump.horiBox.getMaxX() > i.horiBox.getMinX()) {
 				jump.stopped = true;
@@ -317,7 +326,7 @@ public class ObjectRunner {
 			}
 		}else{
 			jump.stopped = false;
-		}
+		}*/
 		
 	}
 }

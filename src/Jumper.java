@@ -24,7 +24,7 @@ public class Jumper extends GameObject {
 	void update() {
 		velocity += gravity;
 		//System.out.println(velocity);
-		y += velocity;
+		//y += velocity;
 		//y += 5*gravity;
 		setBounds();
 		checkBounds();
