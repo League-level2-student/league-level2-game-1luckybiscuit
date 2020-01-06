@@ -1,31 +1,35 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Jumper extends GameObject {
 	int gravity = 1;
 	int velocity = 1;
 	boolean gravityChanged = false;
-	boolean vertStopped = false;
 	boolean stopped = false;
+	//public static BufferedImage alienImg;
 	Jumper(int x, int y, int width, int height, String type) {
 		super(x, y, width, height, type);
 		// TODO Auto-generated constructor stub
 		
 	}
 	void draw(Graphics g) {
-		if(gravity == -1) {
-			g.drawImage(Game.lad , x, y + height, width, -height, null);
-		}else {
-			g.drawImage(Game.lad , x, y, width, height, null);
-		}
 		g.setColor(Color.GREEN);
-		g.fillRect(vertBox.x, vertBox.y, vertBox.width, vertBox.height);
+		g.fillRect((int)x, (int)y, width, height);
+		/*try {
+            alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
+		} catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+		}*/
 	}
 	void update() {
 		velocity += gravity;
 		//System.out.println(velocity);
-		//y += velocity;
-		//y += 5*gravity;
+		y += velocity;
 		setBounds();
 		checkBounds();
 		//replace with actual velocity
@@ -36,8 +40,8 @@ public class Jumper extends GameObject {
 		}
 	}
 	void checkSpeed(float difficulty) {
-		if(stopped == false && x < 375) {
-			x = x + 2 + (int)difficulty;
+		if(stopped == false && x < 400) {
+			x = x+ 2 + (int)difficulty;
 		}
 	}
 }

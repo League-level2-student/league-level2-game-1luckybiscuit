@@ -1,3 +1,4 @@
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,13 +11,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JApplet;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Game extends JPanel implements ActionListener, KeyListener {
 	public static BufferedImage gradient;
-	public static BufferedImage lad;
 	Timer time;
 	Jumper jumper;
 	ObjectRunner or;
@@ -30,7 +31,6 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		or = new ObjectRunner(jumper);
 		try {
             gradient = ImageIO.read(this.getClass().getResourceAsStream("gradient.jpg"));
-            lad = ImageIO.read(this.getClass().getResourceAsStream("lad lol.png"));
 		} catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -38,16 +38,18 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	}
 	void drawMenu(Graphics sad) {
 		sad.drawImage(Game.gradient, 0, 0, GravityGuy.WIDTH+400, GravityGuy.HEIGHT, null);
-		or.draw(sad);
 		sad.setColor(Color.CYAN);
 		sad.setFont(new Font("Arial", Font.BOLD, 100));
 		sad.drawString("GRAVITY LAD", 50, 250);
 		sad.setFont(new Font("Arial", Font.PLAIN, 25));
 		sad.drawString("A \"completely original\" game by Lukas Nepomuceno", 100, 350);
-		sad.drawString("Press Q for mission debrief", 240, 450);
-		sad.drawString("Press ENTER to start", 270, 550);
+		sad.drawString("Press Q for mission debrief", 230, 450);
+		sad.drawString("Press ENTER to start", 260, 550);
+		or.active = false;
+		or.draw(sad);
 	}
 	void drawGame(Graphics g) {
+		or.active = true;
 		g.drawImage(Game.gradient, 0, 0, GravityGuy.WIDTH+400, GravityGuy.HEIGHT, null);
 		or.draw(g);
 		g.setFont(new Font("Arial", Font.BOLD, 45));
@@ -55,14 +57,19 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		g.drawString(Integer.toString(or.score), GravityGuy.WIDTH - 100, 40);
 	}
 	void update() {
-		if(currentState == MENU_STATE) {
-			or.update(false);
-		}else {
-			or.update(true);
-		}
+		or.update();
 		if(jumper.active == false) {
 			System.out.println("ded");
+			deathSFX();
 			currentState = END_STATE;
+		}
+	}
+	public void deathSFX() {
+		try {
+		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("yodaDies.wav"));
+		    sound.play();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	void drawEnd(Graphics sad) {
@@ -89,7 +96,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		repaint();
-		if(currentState == ACTIVE_STATE || currentState == MENU_STATE){
+		if(currentState == ACTIVE_STATE||currentState == MENU_STATE){
             update();
 		}
 	}
@@ -106,19 +113,37 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 			jumper.gravity *= -1;
-			jumper.vertStopped = false;
+			jumpSFX();
 		}
 		if(e.getKeyCode() == KeyEvent.VK_Q && currentState == MENU_STATE) {
 			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity.\nPerhaps he can survive long enough to die of old age instead.");
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
+			startSFX();
 			currentState = ACTIVE_STATE;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == END_STATE) {
+			startSFX();
 			currentState = MENU_STATE;
 			time = new Timer(1000/60,this);
 			jumper = new Jumper(0,200,50,50, "jumper");
 			or = new ObjectRunner(jumper);
+		}
+	}
+	public void jumpSFX() {
+		try {
+		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("jump.wav"));
+		    sound.play();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	public void startSFX() {
+		try {
+		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("switchClick.wav"));
+		    sound.play();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	@Override

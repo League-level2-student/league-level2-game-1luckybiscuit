@@ -1,7 +1,10 @@
+import java.applet.AudioClip;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.JApplet;
 
 public class ObjectRunner {
 	Jumper jump;
@@ -9,6 +12,7 @@ public class ObjectRunner {
 	ArrayList<Block> WallList = new ArrayList();
 	long initialTimer = 1000;
 	long timer;
+	boolean active;
 	Random generator = new Random();
 	int floor;
 	int ceiling;
@@ -24,7 +28,6 @@ public class ObjectRunner {
 	int counterCounter = 1;
 	int oof = 1;
 	int score = 0;
-	int blockCount = 0;
 	int chunkCount = 0;
 	int randomChunk = 5;
 	int intStart = 5;
@@ -37,6 +40,7 @@ public class ObjectRunner {
 	boolean stopped = false;
 	ObjectRunner(Jumper jump) {
 		this.jump = jump;
+		active = false;
 		dimension = 10+(generator.nextInt(10)+1)*13;
 		altDimension = 10+(generator.nextInt(10)+1)*13;
 		addBlock(new Block(0, 50, wallSetPoint, 50, ""));
@@ -47,17 +51,13 @@ public class ObjectRunner {
 		if(intervalCount == function) {
 			interval--;
 			formation = generator.nextInt(5);
-			addCounter += 3;
+			addCounter ++;
 			function += addCounter;
 		}
 		if(intervalCount <= intStart) {
 			if(System.currentTimeMillis() - initialTimer > 0) {
 				if(intervalCount == intStart-3) {
-					//addWall(new Block(GravityGuy.WIDTH, 100, 50, 400, "top"));
-					addWall(new Block(GravityGuy.WIDTH, 100, 50, 100, "top"));
-					addWall(new Block(GravityGuy.WIDTH, 200, 50, 100, "top"));
-					addWall(new Block(GravityGuy.WIDTH, 300, 50, 100, "top"));
-					addWall(new Block(GravityGuy.WIDTH, 400, 50, 100, "top"));
+					addWall(new Block(GravityGuy.WIDTH, 100, 50, 400, "top"));
 				}else if(intervalCount == intStart-2) {
 					addWall(new Block(GravityGuy.WIDTH, 250, 50, 400, "bottom"));
 				}else if(intervalCount == intStart-1) {
@@ -167,36 +167,29 @@ public class ObjectRunner {
 			for(Block o: BlockList) {
 				if(o.box.intersects(i.sensorBox)) {
 					i.shorten();
-					//System.out.println("okay");
+					System.out.println("okay");
 				}
 			}
 		}
 	}
 	void randomWalls() {
 		//vertSpace must not be less than 50
-		if(formation != 6 && formation != 5 && formation != 4) {
-			if(coinFlip < 4) {
-				if(chunkCount == randomChunk) {
-					reroll();
+		reroll();
+		if(chunkCount == randomChunk) {
+			//System.out.println("Vert " + vertSpace);
+			//System.out.println("Rand " + randSpace);
+			if(formation != 6 && formation != 5 && formation != 4) {
+				if(coinFlip < 4) {
 					place();
-					intervalCount++; 
-					chunkCount = 0;
 					randomChunk = (generator.nextInt(10)+3);
-				}
-			}else {
-				if(blockCount < 5) {
-					if(chunkCount == randomChunk) {
-						place();
-						blockCount++; 
-						chunkCount = 0;
-						randomChunk = (generator.nextInt(3)+3);
-					}
-				}else if(blockCount == 5) {
-					blockCount = 0;
-					intervalCount++;
-					reroll();
+				}else {
+					place();
+					randomChunk = (generator.nextInt(7)+3)*3;
 				}
 			}
+			chunkCount = 0;
+			intervalCount++; 
+			//System.out.println(intervalCount);
 		}
 	}
 	void place() {
@@ -214,12 +207,15 @@ public class ObjectRunner {
 			addWall(new Block(wallSetPoint, ceiling, 50, randHeight, "top"));
 			addWall(new Block(wallSetPoint, ceiling+randHeight+50, 50, floor-ceiling-randHeight, "bottom"));
 		}else if(coinFlip == 4) {
-			int hm = generator.nextInt(floor - ceiling);
-			addBlock(new Block(wallSetPoint, ceiling + hm, 100, 100, ""));
+			for(int i = 0;i<5;i++) {
+				addBlock(new Block(wallSetPoint+i*200, ceiling+generator.nextInt(floor - ceiling - 100), 50, 50, ""));
+			}
 		}else if(coinFlip == 5) {
-			int hm = generator.nextInt(floor - ceiling);
-			addBlock(new Block(wallSetPoint, ceiling + hm, 50, 50, ""));
-			addBlock(new Block(wallSetPoint, floor - hm - 50, 50, 50, ""));
+			for(int i = 0;i<5;i++) {
+				int hm = ceiling+generator.nextInt(floor - ceiling - 100) - 100;
+				addBlock(new Block(wallSetPoint+i*200, hm, 50, 50, ""));
+				addBlock(new Block(wallSetPoint+i*200, hm + 150, 50, 50, ""));
+			}
 		}
 	}
 	void reroll() {
@@ -227,6 +223,7 @@ public class ObjectRunner {
 		altDimension = 10+(generator.nextInt(9)+1)*13;
 		vertSpace = (floor - (ceiling + 50))/50;
 		coinFlip = generator.nextInt(6);
+		//coinFlip = 5;
 		randHeight = (generator.nextInt(vertSpace)+1)*50;
 		randSpace = generator.nextInt(vertSpace)*20; 
 	}
@@ -246,10 +243,8 @@ public class ObjectRunner {
 			i.draw(g);
 		}
 	}
-	void update(boolean active) {
+	void update() {
 		if(active) {
-			manageBlocks();
-			purgeObjects();
 			for(int i = 0;i < BlockList.size();i++) {
 				BlockList.get(i).x -= oppositeInt;
 				BlockList.get(i).update();
@@ -259,12 +254,15 @@ public class ObjectRunner {
 				WallList.get(i).update();
 			}
 		}
-		//jump.velocity += jump.gravity;
-		//jump.vertBox.y += jump.velocity;
-		jump.horiBox.x += oppositeInt;
+		jump.vertBox.y += jump.velocity;
+		jump.horiBox.x++;
 		collision();
 		jump.checkSpeed(oppositeInt/10);
 		jump.update();
+		if(active) {
+			manageBlocks();
+			purgeObjects();
+		}
 	}
 	void addBlock(Block b) {
 		BlockList.add(b);
@@ -273,60 +271,33 @@ public class ObjectRunner {
 		WallList.add(b);
 	}
 	void collision() {
-		//jump.y+=jump.velocity;
-		for(int o = 0;o < Math.abs(jump.velocity);o++) {
-			jump.vertBox.y += jump.gravity;
-			for(Block i: BlockList) {
-				collide(i);
-			}
-			for(Block i: WallList) {
-				collide(i);
-			}
-			if(jump.vertStopped) {
-				jump.y -= jump.gravity;
-			}else {
-				jump.y+=jump.gravity;
-			}	
-			jump.setBounds();
+		for(Block i: BlockList) {
+			collide(i);
 		}
-	}
-	boolean checkPrediction(int jumpY, int blockY, int boxY) {
-		if(Math.abs(jumpY-blockY) < Math.abs(jumpY-boxY)) {
-			return false;
-		}else {
-			return true;
+		for(Block i: WallList) {
+			collide(i);
 		}
-	}
-	float distanceFormula(int x, int y, int xx, int yy) {
-		//y comes from top
-		System.out.println((float) ((float)(y-yy)/(float)(x-xx)));
-		return ((float) (y-yy)/(x-xx));	
 	}
 	void collide(GameObject i) {
-		if(jump.box.intersects(i.box)) {
-			System.out.println(jump.gravity);
-			jump.vertStopped = true;
-			jump.velocity = 0;
-			/*if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)>0) {
-				System.out.println("positive\n");
-				jump.y = (int) (i.y+i.height);
-			}else if(distanceFormula(jump.x,jump.y,i.x,i.checkPoint)<=0) {
-				System.out.println("negative\n");
-				jump.y = (int) (i.y-jump.height);
-			}*/
-		}else {
-			jump.vertStopped = false;
-		}
-		/*
 		if(jump.horiBox.intersects(i.horiBox)) {
-			if(jump.horiBox.getMaxX() > i.horiBox.getMinX()) {
+			if(jump.horiBox.getMaxX() > i.vertBox.getMinX()) {
 				jump.stopped = true;
-				//jump.x = (int) (i.horiBox.getMinX()-jump.width);
-				//jump.update();
+				jump.x = (int) (i.vertBox.getMinX()-jump.width);
 			}
 		}else{
 			jump.stopped = false;
-		}*/
+			if(jump.vertBox.intersects(i.vertBox)) {
+				if(i.vertBox.getMaxY() > jump.vertBox.getMinY() && jump.vertBox.getMinY() > i.vertBox.getMinY()) {
+					jump.y = (int) (i.vertBox.getMaxY());
+					jump.velocity = 0;
+				}
+				if(i.vertBox.getMaxY() > jump.vertBox.getMaxY() && jump.vertBox.getMaxY() > i.vertBox.getMinY()) {
+					jump.y = (int) (i.vertBox.getMinY() - jump.height);
+					jump.velocity = 0;
+				}
+				
+			}
+		}
 		
 	}
 }
