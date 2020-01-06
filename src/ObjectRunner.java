@@ -159,7 +159,7 @@ public class ObjectRunner {
 			counterCounter+=oof;
 			timer = System.currentTimeMillis();
 			oppositeInt = 157 - interval;
-			score++;
+			score+=oppositeInt/5;
 		}
 	}
 	void cheque() {
@@ -167,7 +167,7 @@ public class ObjectRunner {
 			for(Block o: BlockList) {
 				if(o.box.intersects(i.sensorBox)) {
 					i.shorten();
-					System.out.println("okay");
+					//System.out.println("okay");
 				}
 			}
 		}

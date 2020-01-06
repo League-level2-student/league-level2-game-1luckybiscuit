@@ -10,21 +10,26 @@ public class Jumper extends GameObject {
 	int velocity = 1;
 	boolean gravityChanged = false;
 	boolean stopped = false;
-	//public static BufferedImage alienImg;
+	public static BufferedImage spriteImg;
 	Jumper(int x, int y, int width, int height, String type) {
 		super(x, y, width, height, type);
 		// TODO Auto-generated constructor stub
 		
 	}
 	void draw(Graphics g) {
-		g.setColor(Color.GREEN);
-		g.fillRect((int)x, (int)y, width, height);
-		/*try {
-            alienImg = ImageIO.read(this.getClass().getResourceAsStream("alien.png"));
+		//g.setColor(Color.GREEN);
+		//g.fillRect((int)x, (int)y, width, height);
+		try {
+            spriteImg = ImageIO.read(this.getClass().getResourceAsStream("gravityLad.png"));
 		} catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-		}*/
+		}
+		if(gravity == 1) {
+			g.drawImage(spriteImg, x, y, width, height, null);
+		}else if(gravity == -1) {
+			g.drawImage(spriteImg, x, y + height, width, 0 - height, null);
+		}
 	}
 	void update() {
 		velocity += gravity;

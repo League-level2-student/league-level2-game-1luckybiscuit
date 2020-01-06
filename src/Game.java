@@ -25,10 +25,16 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	final static int ACTIVE_STATE = 1;
 	final static int END_STATE = 2;
 	int currentState = 0;
+	AudioClip jump;
+	AudioClip switchClick;
+	AudioClip death;
 	Game() {
 		time = new Timer(1000/60,this);
 		jumper = new Jumper(0,200,50,50, "jumper");
 		or = new ObjectRunner(jumper);
+		jump = JApplet.newAudioClip(getClass().getResource("jump.wav"));
+		switchClick = JApplet.newAudioClip(getClass().getResource("switchClick.wav"));
+		death = JApplet.newAudioClip(getClass().getResource("yodaDies.wav"));
 		try {
             gradient = ImageIO.read(this.getClass().getResourceAsStream("gradient.jpg"));
 		} catch (IOException e) {
@@ -59,18 +65,13 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	void update() {
 		or.update();
 		if(jumper.active == false) {
-			System.out.println("ded");
+			//System.out.println("ded");
 			deathSFX();
 			currentState = END_STATE;
 		}
 	}
 	public void deathSFX() {
-		try {
-		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("yodaDies.wav"));
-		    sound.play();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		death.play();
 	}
 	void drawEnd(Graphics sad) {
 		sad.setColor(Color.BLACK);
@@ -116,7 +117,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			jumpSFX();
 		}
 		if(e.getKeyCode() == KeyEvent.VK_Q && currentState == MENU_STATE) {
-			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity.\nPerhaps he can survive long enough to die of old age instead.");
+			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity and avoid obstacles.\nScore increases over time, so do your best to make him die of old age instead.");
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
 			startSFX();
@@ -131,20 +132,12 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		}
 	}
 	public void jumpSFX() {
-		try {
-		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("jump.wav"));
-		    sound.play();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		jump.stop();
+		jump.play();
 	}
 	public void startSFX() {
-		try {
-		    AudioClip sound = JApplet.newAudioClip(getClass().getResource("switchClick.wav"));
-		    sound.play();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		switchClick.stop();
+	    switchClick.play();
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
