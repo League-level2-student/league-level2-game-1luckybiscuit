@@ -47,7 +47,7 @@ public class ObjectRunner {
 		if(intervalCount == function) {
 			interval--;
 			formation = generator.nextInt(7);
-			addCounter ++;
+			addCounter++;
 			function += addCounter;
 			System.out.println(function);
 		}
@@ -181,8 +181,7 @@ public class ObjectRunner {
 					randomChunk = (generator.nextInt(10)+3);
 				}else {
 					place();
-					randomChunk = (generator.nextInt(7)+3)*3;
-					intervalCount++;
+					randomChunk = (generator.nextInt(3)+4)*3;
 				}
 			}else {
 				randomChunk = 10;
@@ -190,6 +189,7 @@ public class ObjectRunner {
 			chunkCount = 0;
 			intervalCount++; 
 			//System.out.println(intervalCount);
+			//System.out.println("rc " + randomChunk);
 		}
 	}
 	void place() {
