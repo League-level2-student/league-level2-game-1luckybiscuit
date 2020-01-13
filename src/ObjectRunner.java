@@ -1,10 +1,6 @@
-import java.applet.AudioClip;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.swing.JApplet;
 
 public class ObjectRunner {
 	Jumper jump;
@@ -50,9 +46,10 @@ public class ObjectRunner {
 		cheque();
 		if(intervalCount == function) {
 			interval--;
-			formation = generator.nextInt(5);
+			formation = generator.nextInt(7);
 			addCounter ++;
 			function += addCounter;
+			System.out.println(function);
 		}
 		if(intervalCount <= intStart) {
 			if(System.currentTimeMillis() - initialTimer > 0) {
@@ -185,7 +182,10 @@ public class ObjectRunner {
 				}else {
 					place();
 					randomChunk = (generator.nextInt(7)+3)*3;
+					intervalCount++;
 				}
+			}else {
+				randomChunk = 10;
 			}
 			chunkCount = 0;
 			intervalCount++; 

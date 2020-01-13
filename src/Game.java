@@ -1,6 +1,5 @@
 import java.applet.AudioClip;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -117,7 +116,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			jumpSFX();
 		}
 		if(e.getKeyCode() == KeyEvent.VK_Q && currentState == MENU_STATE) {
-			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity and avoid obstacles.\nScore increases over time, so do your best to make him die of old age instead.");
+			JOptionPane.showMessageDialog(null, "GRAVITY LAD is stuck in an infinitely long passage being sucked by a black hole! Reality is breaking apart! \nPress SPACE to switch gravity and avoid obstacles. \nOnce GRAVITY LAD is offscreen he'll be overwhelmed by the black hole's gravitational pull and be compressed out of existence. \nScore increases over time, so do your best to make him die of old age instead.\nBest of luck!");
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER && currentState == MENU_STATE) {
 			startSFX();
